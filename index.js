@@ -1,5 +1,9 @@
 require("dotenv").config();
 const mysql = require("mysql2");
+const express = require("express");
+
+const app = express();
+const port = process.env.PORT || 25060;
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -19,4 +23,8 @@ connection.connect((err) => {
     return;
   }
   console.log("Connected to DigitalOcean MySQL database");
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
