@@ -1,33 +1,31 @@
 const express = require("express");
 const app = express();
-const mysql = require("mysql2");
-
-require("dotenv").config();
-
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  port: 25060,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
+const createConnection = require("./config/dbConfig");
+const userRoutes = require("./routes/userRoutes");
 
 app.use(express.json());
 
-// Connect to the database
-connection.connect((err) => {
-  if (err) {
-    console.error("Error connecting to MySQL:", err);
-    return;
-  }
-  console.log("Connected to DigitalOcean MySQL database");
-});
+// Establish the database connection
+createConnection()
+  .then((connection) => {
+    app.locals.db = connection; // Store the connection in app.locals for routes to use
 
-// Start the server
-const port = process.env.PORT || 25060;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+    // Use routes
+    app.use(
+      "/api/users",
+      (req, res, next) => {
+        req.db = connection; // Attach the db connection to the request
+        next();
+      },
+      userRoutes
+    );
+
+    // Start the server after successful database connection
+    const port = process.env.PORT || 25060;
+    app.listen(port, () => {
+      console.log(`Server is running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to connect to the database:", err);
+  });
