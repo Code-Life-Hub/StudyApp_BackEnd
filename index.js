@@ -1,9 +1,8 @@
-require("dotenv").config();
-const mysql = require("mysql2");
 const express = require("express");
-
 const app = express();
-const port = process.env.PORT || 25060;
+const mysql = require("mysql2");
+
+require("dotenv").config();
 
 const connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -12,9 +11,11 @@ const connection = mysql.createConnection({
   database: process.env.DB_NAME,
   port: 25060,
   ssl: {
-    rejectUnauthorized: false, // This does not allow self-signed certs.
+    rejectUnauthorized: false,
   },
 });
+
+app.use(express.json());
 
 // Connect to the database
 connection.connect((err) => {
@@ -25,6 +26,8 @@ connection.connect((err) => {
   console.log("Connected to DigitalOcean MySQL database");
 });
 
+// Start the server
+const port = process.env.PORT || 25060;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
