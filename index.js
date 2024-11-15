@@ -8,13 +8,13 @@ app.use(express.json());
 // Establish the database connection
 createConnection()
   .then((connection) => {
-    app.locals.db = connection; // Store the connection in app.locals for routes to use
+    app.locals.db = connection;
 
     // Use routes
     app.use(
       "/api/users",
       (req, res, next) => {
-        req.db = connection; // Attach the db connection to the request
+        req.db = connection;
         next();
       },
       userRoutes
