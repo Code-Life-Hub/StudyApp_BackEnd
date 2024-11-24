@@ -1,29 +1,28 @@
 const express = require("express");
 const app = express();
 const createConnection = require("./config/dbConfig");
-const userRoutes = require("./routes/userRoutes");
+const userRoutes = require("./routes/userRoutes"); // Correct import
 
-app.use(express.json());
+app.use(express.json()); // Parse JSON body
 
 // Establish the database connection
 createConnection()
   .then((connection) => {
-    app.locals.db = connection;
+    app.locals.db = connection; // Store the connection for routes to use
 
-    // Use routes
-    app.use(
-      "/api/users",
-      (req, res, next) => {
-        req.db = connection;
-        next();
-      },
-      userRoutes
-    );
+    // Attach the database connection to the request
+    app.use((req, res, next) => {
+      req.db = connection; // Attach the DB connection
+      next();
+    });
 
-    // Start the server after successful database connection
-    const port = process.env.PORT || 25060;
+    // Use userRoutes
+    app.use("/api/users", userRoutes);
+
+    // Start the server
+    const port = 3001;
     app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+      console.log(`Server running on port ${port}`);
     });
   })
   .catch((err) => {
