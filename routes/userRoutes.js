@@ -4,7 +4,7 @@ const multer = require("multer");
 const upload = multer();
 const crypto = require("crypto");
 
-// Middleware
+// Middleware to check database connection
 router.use((req, res, next) => {
   if (!req.db) {
     return res.status(500).json({ error: "Database connection not available" });
@@ -102,6 +102,7 @@ router.post("/api/users/signup", upload.none(), async (req, res) => {
       message: "User successfully registered",
       user_account_number,
       session_id,
+      profilePictureUrl,
     });
   } catch (err) {
     console.error("Error inserting user:", err);
