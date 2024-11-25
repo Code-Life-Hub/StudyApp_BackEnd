@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const crypto = require("crypto");
+const upload = require("../utils/uploads");
 
-// Middleware
+// Middleware to check database connection
 router.use((req, res, next) => {
   if (!req.db) {
     return res.status(500).json({ error: "Database connection not available" });
@@ -9,7 +11,7 @@ router.use((req, res, next) => {
   next();
 });
 
-// all users in study_users table.
+// Get all users from study_users table
 router.get("/users", async (req, res) => {
   try {
     const [rows] = await req.db.query("SELECT * FROM study_users");
@@ -18,19 +20,41 @@ router.get("/users", async (req, res) => {
     console.error("Error fetching users:", err);
     res.status(500).json({ error: "Failed to fetch users" });
   }
-  console.log(userRoutes);
 });
 
-// create a new user in study_users table.
+// Create a new user in study_users table, including profile picture upload
+router.post("/signup", upload.single("profile_picture"), async (req, res) => {
+  const {
+    user_full_name,
+    user_username,
+    user_email,
+    user_tele,
+    user_contact_method,
+    user_age,
+    Country,
+    intended_use,
+    user_education_status,
+    education_Level,
+    favorite_subject,
+    user_password,
+  } = req.body;
 
-const crypto = require("crypto");
-
-router.post("/signup", async (req, res) => {
-  const { user_full_name, user_username, user_email, user_tele, user_contact_method } = req.body;
-
-  // Validate required user input fields
-  if (!user_full_name || !user_username || !user_email || !user_tele || !user_contact_method) {
+  // Validate required fields
+  if (
+    !user_full_name ||
+    !user_username ||
+    !user_email ||
+    !user_tele ||
+    !user_contact_method ||
+    !user_password
+  ) {
     return res.status(400).json({ error: "Invalid input" });
+  }
+
+  // Handle profile picture (if uploaded)
+  let profilePictureUrl = null;
+  if (req.file) {
+    profilePictureUrl = `https://studyapplication.nyc3.digitaloceanspaces.com/${req.file.key}`;
   }
 
   // Generate backend-managed fields
@@ -41,9 +65,9 @@ router.post("/signup", async (req, res) => {
   const user_access_level = 2;
 
   try {
-    // Insert the user into the database
+    // Insert user into database
     await req.db.query(
-      "INSERT INTO study_users (user_full_name, user_account_number, user_username, user_email, user_tele, user_contact_method, session_id, user_cookie, user_pas_rst_tkn, user_access_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      "INSERT INTO study_users (user_full_name, user_account_number, user_username, user_email, user_tele, user_contact_method, user_age, Country, intended_use, user_education_status, education_Level, favorite_subject, user_password, profile_picture, session_id, user_cookie, user_pas_rst_tkn, user_access_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
       [
         user_full_name,
         user_account_number,
@@ -51,6 +75,14 @@ router.post("/signup", async (req, res) => {
         user_email,
         user_tele,
         user_contact_method,
+        user_age,
+        Country,
+        intended_use,
+        user_education_status,
+        education_Level,
+        favorite_subject,
+        user_password,
+        profilePictureUrl,
         session_id,
         user_cookie,
         user_pas_rst_tkn,
@@ -58,12 +90,13 @@ router.post("/signup", async (req, res) => {
       ]
     );
 
-    // Respond with success and optionally return the generated fields
+    // Respond with success and generated data
     res.json({
       success: true,
       message: "User successfully registered",
       user_account_number,
       session_id,
+      profilePictureUrl,
     });
   } catch (err) {
     console.error("Error inserting user:", err);
@@ -71,5 +104,39 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+// Update profile picture for an existing user
+router.post(
+  "/upload-profile-picture",
+  upload.single("profile_picture"), // Middleware to handle the upload
+  async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    const profilePictureUrl = `https://studyapplication.nyc3.digitaloceanspaces.com/${req.file.key}`;
+
+    try {
+      const { user_id } = req.body; // Assuming `user_id` is passed in the request
+      if (!user_id) {
+        return res.status(400).json({ error: "User ID is required" });
+      }
+
+      // Update the user's profile picture in the database
+      await req.db.query(
+        "UPDATE study_users SET profile_picture = ? WHERE user_id = ?",
+        [profilePictureUrl, user_id]
+      );
+
+      res.json({
+        success: true,
+        message: "Profile picture uploaded successfully",
+        profilePictureUrl,
+      });
+    } catch (err) {
+      console.error("Error updating profile picture:", err);
+      res.status(500).json({ error: "Failed to upload profile picture" });
+    }
+  }
+);
 
 module.exports = router;
