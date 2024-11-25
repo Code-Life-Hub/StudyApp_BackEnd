@@ -4,6 +4,15 @@ const createConnection = require("./config/dbConfig");
 const userRoutes = require("./routes/userRoutes");
 require("dotenv").config();
 
+const cors = require("cors");
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 // Middleware to parse JSON body
 app.use(express.json());
 
