@@ -20,7 +20,7 @@ async function queryDatabase(query, params = []) {
     const [rows] = await db.execute(query, params);
     return rows;
   } catch (error) {
-    console.error("Database query error:", error);
+    console.error("Database query failed:", error);
     throw error;
   }
 }
@@ -57,21 +57,21 @@ function clearSessionCookie(res) {
 //|---------------------------------------------CRUD OPS START HERE---------------------------------------------|
 // -- Insert a new user
 async function createUser(user) {
-  const query = `
-    INSERT INTO study_users (user_full_name, user_account_number, user_username, user_email, user_tele, user_contact_method, session_id, user_cookie, user_pas_rst_tkn, user_access_level)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  const query = `INSERT INTO study_users (user_full_name, user_account_number, user_username, user_email, user_tele, user_contact_method, Age, Country, intended_use, education_status, education_level, favorite_subject, user_password, profile_picture) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
   const params = [
     user.user_full_name,
-    user.user_account_number,
     user.user_username,
     user.user_email,
     user.user_tele,
     user.user_contact_method,
-    user.session_id,
-    user.user_cookie,
-    user.user_pas_rst_tkn,
-    user.user_access_level,
+    user.Age,
+    user.Country,
+    user.intended_use,
+    user.education_status,
+    user.education_level,
+    user.favorite_subject,
+    user.user_password,
+    user.profile_picture,
   ];
   return await queryDatabase(query, params);
 }
