@@ -12,6 +12,11 @@ router.use((req, res, next) => {
   next();
 });
 
+// BELOW IS A TEST ENDPOINT FOR POSTMAN
+router.get("/test", (req, res) => {
+  res.status(200).json({ message: "Test route is working" });
+});
+
 // Get all users
 router.get("/api/users", async (req, res) => {
   try {
@@ -24,7 +29,7 @@ router.get("/api/users", async (req, res) => {
 });
 
 // Create a new user
-router.post("/api/users/signup", upload.none(), async (req, res) => {
+router.post("/signup", upload.none(), async (req, res) => {
   const {
     user_full_name,
     user_username,
@@ -62,6 +67,8 @@ router.post("/api/users/signup", upload.none(), async (req, res) => {
       "SELECT * FROM study_users WHERE user_email = ?",
       [user_email]
     );
+    console.log("Signup route hit with data:", req.body);
+
     if (existingUser.length > 0) {
       return res.status(400).json({ error: "Email already exists" });
     }
