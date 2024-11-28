@@ -40,6 +40,7 @@ createConnection()
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
     });
+    console.log("User routes mounted at /api/users");
   })
   .catch((err) => {
     console.error("Failed to connect to the database:", err);
