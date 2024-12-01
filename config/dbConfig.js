@@ -14,7 +14,8 @@ function createPool() {
       waitForConnections: true,
       connectionLimit: 10, // Maximum number of connections in the pool
       queueLimit: 0, // No limit for queued requests
-      connectTimeout: 10000, // 10 seconds connection timeout
+      // connection timeout should be 20 minutes
+      connectTimeout: 1200000,
     });
     console.log("Database pool created.");
   }
