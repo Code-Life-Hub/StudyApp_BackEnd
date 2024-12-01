@@ -20,18 +20,18 @@ function createPool() {
   }
 
   // Log pool stats every 10 seconds
-  setInterval(async () => {
-    try {
-      const [rows] = await pool.query("SELECT 1");
-      console.log("Pool is active and functional.");
-    } catch (error) {
-      console.error("Error testing pool connection:", {
-        message: error.message,
-        code: error.code,
-        stack: error.stack,
-      });
-    }
-  }, 10000);
+  // setInterval(async () => {
+  //   try {
+  //     const [rows] = await pool.query("SELECT 1");
+  //     console.log("Pool is active and functional.");
+  //   } catch (error) {
+  //     console.error("Error testing pool connection:", {
+  //       message: error.message,
+  //       code: error.code,
+  //       stack: error.stack,
+  //     });
+  //   }
+  // }, 60000);
 
   return pool;
 }
