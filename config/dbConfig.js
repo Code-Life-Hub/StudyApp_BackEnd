@@ -14,24 +14,25 @@ function createPool() {
       waitForConnections: true,
       connectionLimit: 10, // Maximum number of connections in the pool
       queueLimit: 0, // No limit for queued requests
-      connectTimeout: 10000, // 10 seconds connection timeout
+      // connection timeout should be 20 minutes
+      connectTimeout: 1200000,
     });
     console.log("Database pool created.");
   }
 
   // Log pool stats every 10 seconds
-  setInterval(async () => {
-    try {
-      const [rows] = await pool.query("SELECT 1");
-      console.log("Pool is active and functional.");
-    } catch (error) {
-      console.error("Error testing pool connection:", {
-        message: error.message,
-        code: error.code,
-        stack: error.stack,
-      });
-    }
-  }, 10000);
+  // setInterval(async () => {
+  //   try {
+  //     const [rows] = await pool.query("SELECT 1");
+  //     console.log("Pool is active and functional.");
+  //   } catch (error) {
+  //     console.error("Error testing pool connection:", {
+  //       message: error.message,
+  //       code: error.code,
+  //       stack: error.stack,
+  //     });
+  //   }
+  // }, 60000);
 
   return pool;
 }
