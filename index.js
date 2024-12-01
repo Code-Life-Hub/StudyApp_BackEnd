@@ -9,7 +9,7 @@ const cors = require("cors");
 // Configure CORS
 app.use(
   cors({
-    origin: ["http://localhost:3000"],
+    origin: ["https://study-buddy-ewbor.ondigitalocean.app/"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
