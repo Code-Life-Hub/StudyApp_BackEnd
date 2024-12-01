@@ -1,25 +1,39 @@
-// Database configuration
 const mysql = require("mysql2/promise");
-require("dotenv").config();
 
-async function createConnection() {
-  try {
-    const connection = await mysql.createConnection({
+let pool;
+
+function createPool() {
+  if (!pool) {
+    pool = mysql.createPool({
       host: process.env.DB_HOST,
       user: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME,
       port: 25060,
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      ssl: { rejectUnauthorized: false },
+      waitForConnections: true,
+      connectionLimit: 10, // Maximum number of connections in the pool
+      queueLimit: 0, // No limit for queued requests
+      connectTimeout: 10000, // 10 seconds connection timeout
     });
-    console.log("Connected to DigitalOcean MySQL database");
-    return connection;
-  } catch (err) {
-    console.error("Error connecting to MySQL:", err);
-    throw err;
+    console.log("Database pool created.");
   }
+
+  // Log pool stats every 10 seconds
+  setInterval(async () => {
+    try {
+      const [rows] = await pool.query("SELECT 1");
+      console.log("Pool is active and functional.");
+    } catch (error) {
+      console.error("Error testing pool connection:", {
+        message: error.message,
+        code: error.code,
+        stack: error.stack,
+      });
+    }
+  }, 10000);
+
+  return pool;
 }
 
-module.exports = createConnection;
+module.exports = createPool();

@@ -57,7 +57,7 @@ function clearSessionCookie(res) {
 //|---------------------------------------------CRUD OPS START HERE---------------------------------------------|
 // -- Insert a new user
 async function createUser(user) {
-  const query = `INSERT INTO study_users (user_full_name, user_account_number, user_username, user_email, user_tele, user_contact_method, Age, Country, intended_use, education_status, education_level, favorite_subject, user_password, profile_picture) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+  const query = `INSERT INTO study_users (user_full_name, user_account_number, user_username, user_email, user_tele, user_contact_method, Age, Country, intended_use, education_status, education_level, favorite_subject, user_password) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
   const params = [
     user.user_full_name,
     user.user_username,
@@ -71,7 +71,6 @@ async function createUser(user) {
     user.education_level,
     user.favorite_subject,
     user.user_password,
-    user.profile_picture,
   ];
   return await queryDatabase(query, params);
 }
