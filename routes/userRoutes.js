@@ -18,7 +18,7 @@ router.use((req, res, next) => {
 // });
 
 // Get all users
-router.get("/api/users", async (req, res) => {
+router.get("/users", async (req, res) => {
   try {
     const [rows] = await req.db.query("SELECT * FROM study_users");
     res.json(rows);
@@ -28,7 +28,7 @@ router.get("/api/users", async (req, res) => {
   }
 });
 
-router.post("/api/users/signup", async (req, res) => {
+router.post("/users/signup", async (req, res) => {
   const {
     user_full_name,
     user_username,
