@@ -13,12 +13,12 @@ router.use((req, res, next) => {
 });
 
 // Test Endpoint
-router.get("/test", (req, res) => {
-  res.status(200).json({ message: "Test route is working" });
-});
+// router.get("/test", (req, res) => {
+//   res.status(200).json({ message: "Test route is working" });
+// });
 
 // Get all users
-router.get("/", async (req, res) => {
+router.get("/api/users", async (req, res) => {
   try {
     const [rows] = await req.db.query("SELECT * FROM study_users");
     res.json(rows);
@@ -28,7 +28,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/signup", async (req, res) => {
+router.post("/api/users/signup", async (req, res) => {
   const {
     user_full_name,
     user_username,
