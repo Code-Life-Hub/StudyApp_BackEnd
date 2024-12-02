@@ -120,7 +120,7 @@ router.post("/api/users/signup", async (req, res) => {
     console.error("Database error during user registration:", err);
     res.status(500).json({ error: "Failed to register user" });
   } finally {
-    if (connection) connection.release(); // Release the connection back to the pool
+    if (connection) connection.release();
   }
 });
 
