@@ -1,19 +1,18 @@
-const express = require("express");
-const app = express();
 const pool = require("./config/dbConfig"); // Use the connection pool
 const userRoutes = require("./routes/userRoutes");
 require("dotenv").config();
-
+const express = require("express");
 const cors = require("cors");
+const app = express();
 
-// Configure CORS
-app.use(
-  cors({
-    origin: ["https://study-buddy-ewbor.ondigitalocean.app/"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+const corsOptions = {
+  origin: "https://study-buddy-ewbor.ondigitalocean.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
 
 // Middleware to parse JSON body
 app.use(express.json());
